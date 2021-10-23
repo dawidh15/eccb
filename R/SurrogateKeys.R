@@ -18,8 +18,14 @@
 #' \item{5}{Alimentar memo con el nuevo match.
 #' }}
 #'
-#' @param dimTabla una versión recortada de la tabla dimensional, con el campo de join y el surrogate key. Si el campo de join es texto, entonces lo mejor es normalizarlo.
-#' @param sourceTabla una versión recortada de la tabla fuente, con el campo de join. Si el campo de join es texto, entonces lo mejor es normalizarlo.
+#' @param tablaDim una versión recortada de la tabla dimensional, con el campo de join y el surrogate key. Si el campo de join es texto, entonces lo mejor es normalizarlo.
+#' @param tablaFuente una versión recortada de la tabla fuente, con el campo de join. Si el campo de join es texto, entonces lo mejor es normalizarlo.
+#' @param nombreDimJoin el nombre de la columna en la tabla dimensional usada para combinar las tablas.
+#' @param nombreDimClave el nombre de la columna en la tabla dimensional que contiene el surrogate key.
+#' @param nombreFuenteJoin el nombre de la columna en la fuente de datos usada para combinar las tablas
+#' @param maxChars el máximo número de caracteres permitido, en que un texto de la fuente difiere del texto limpio en la tabla de dimensión.
+#' Por ejemplo, "Frodo" difiere de "frodo" en 1 caracter. Si \code{maxChars = 3}, entonces el match se toma como bueno.
+#' Este parámetro proviene del método de distancia de Levenshtein.
 #'
 #' @importFrom stringdist stringdist
 #'
@@ -33,52 +39,60 @@
 #'    EncontrarSurrogateFuzzyMemo(2, 3)
 #' }
 EncontrarSurrogateFuzzyMemo <-
-  function(dimTabla,
-           sourceTabla,
-           dimJoinName,
-           dimKeyName,
-           sourceJoinName,
+  function(tablaDim,
+           tablaFuente,
+           nombreDimJoin,
+           nombreDimClave,
+           nombreFuenteJoin,
            maxChars)
   {
     # Crear tablas con nombre y dimensiones apropiadas
-    sourceTabla <- sourceTabla %>%
-      dplyr::select(sourceJoinName)
-    colnames(sourceTabla) <- c("sourceJoin")
+    tablaFuente <- tablaFuente %>%
+      dplyr::mutate(secuenciaFuente = dplyr::row_number()) %>%
+      dplyr::select(nombreFuenteJoin, secuenciaFuente)
+    colnames(tablaFuente) <- c("sourceJoin", "secuenciaFuente")
 
-    dimTabla <- dimTabla %>%
-      dplyr::select(dimJoinName, dimKeyName)
-    colnames(dimTabla) <- c("dimJoin", "dimKey")
+    tablaDim <- tablaDim %>%
+      dplyr::select(nombreDimJoin, nombreDimClave)
+    colnames(tablaDim) <- c("dimJoin", "dimKey")
 
     # Determinar si hay matches exactos
-    exactMatches <-
-      dplyr::inner_join(sourceTabla,
-                       dimTabla,
+    coincidenciaExacta <-
+      dplyr::inner_join(tablaFuente,
+                       tablaDim,
                        by = c("sourceJoin" = "dimJoin"),
                        keep = TRUE)
 
-    surrogateKeys <- dplyr::pull(exactMatches, dimKey)
+    surrogateKeys <-
+      data.frame(
+        secuencia = dplyr::pull(coincidenciaExacta,secuenciaFuente )
+        , Key = dplyr::pull(coincidenciaExacta, dimKey) )
 
     # si todas las files tienen un match, regresar surrogate key
-    if (length(surrogateKeys) == nrow(sourceTabla))
-      return(surrogateKeys)
+    if (length(surrogateKeys$Key) == nrow(tablaFuente))
+    {
+      # Devolver clave en secuencia con tabla fuente
+      return(DevolverEnSecuencia(surrogateTable = surrogateKeys))
+    }
 
-    # noMatches
-    noMatches <-
-      dplyr::anti_join(sourceTabla
+
+    # noCoincidencia
+    noCoincidencia <-
+      dplyr::anti_join(tablaFuente
                        ,
-                       dimTabla
+                       tablaDim
                        ,
                        by = c("sourceJoin" = "dimJoin")
                        ,
                        keep = TRUE)
-    assertthat::not_empty(noMatches)
+    assertthat::not_empty(noCoincidencia)
 
     memo <-
       data.frame(original = character(), surrogateKey = numeric())
 
-    for (contador in 1:nrow(noMatches))
+    for (contador in 1:nrow(noCoincidencia))
     {
-      valorActual <- noMatches$sourceJoin[contador]
+      valorActual <- noCoincidencia$sourceJoin[contador]
       enMemo <-
         .EncontrarEnMemo(original = valorActual
                          , memo = memo)
@@ -87,19 +101,28 @@ EncontrarSurrogateFuzzyMemo <-
         bestMatchedKey <-
           .EncontrarSurrogateFuzzy(buscaMe = valorActual
                                    ,
-                                   buscaEnTabla = dimTabla
+                                   buscaEnTabla = tablaDim
                                    ,
                                    maxChars = maxChars)
-        surrogateKeys <- append(surrogateKeys, bestMatchedKey)
+
+        surrogateKeys <-  surrogateKeys %>%
+          dplyr::add_row(
+            Key = bestMatchedKey
+            , secuencia = noCoincidencia$secuenciaFuente[contador])
+
         memo <- memo %>%
           dplyr::add_row( original = valorActual,
                           surrogateKey = bestMatchedKey)
+
       } else {
-        surrogateKeys <- append(surrogateKeys, enMemo)
+        surrogateKeys <- surrogateKeys %>%
+          dplyr::add_row(
+            Key = enMemo
+            , secuencia = noCoincidencia$secuenciaFuente[contador])
       }
 
     }# for
-    return(surrogateKeys)
+    return(DevolverEnSecuencia(surrogateTable = surrogateKeys))
   }
 
 
@@ -115,6 +138,8 @@ EncontrarSurrogateFuzzyMemo <-
     stop("memo no puede tener múltiples matches.")
   }
 }
+
+# EncontrarSurrogateFuzzyMemo Helpers------------------
 
 .EncontrarSurrogateFuzzy <-
   function(buscaMe
@@ -140,3 +165,13 @@ EncontrarSurrogateFuzzyMemo <-
       return(NA)
     }
   }
+
+# Devolver clave en secuencia con tabla fuente
+DevolverEnSecuencia <- function(surrogateTable)
+{
+  surrogateTable <-
+    surrogateTable %>%
+    dplyr::arrange(secuencia)
+  return(surrogateTable$Key)
+}
+
