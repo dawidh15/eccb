@@ -5,18 +5,28 @@
 \title{EncontrarSurrogateFuzzyMemo}
 \usage{
 EncontrarSurrogateFuzzyMemo(
-  dimTabla,
-  sourceTabla,
-  dimJoinName,
-  dimKeyName,
-  sourceJoinName,
+  tablaDim,
+  tablaFuente,
+  nombreDimJoin,
+  nombreDimClave,
+  nombreFuenteJoin,
   maxChars
 )
 }
 \arguments{
-\item{dimTabla}{una versión recortada de la tabla dimensional, con el campo de join y el surrogate key. Si el campo de join es texto, entonces lo mejor es normalizarlo.}
+\item{tablaDim}{una versión recortada de la tabla dimensional, con el campo de join y el surrogate key. Si el campo de join es texto, entonces lo mejor es normalizarlo.}
 
-\item{sourceTabla}{una versión recortada de la tabla fuente, con el campo de join. Si el campo de join es texto, entonces lo mejor es normalizarlo.}
+\item{tablaFuente}{una versión recortada de la tabla fuente, con el campo de join. Si el campo de join es texto, entonces lo mejor es normalizarlo.}
+
+\item{nombreDimJoin}{el nombre de la columna en la tabla dimensional usada para combinar las tablas.}
+
+\item{nombreDimClave}{el nombre de la columna en la tabla dimensional que contiene el surrogate key.}
+
+\item{nombreFuenteJoin}{el nombre de la columna en la fuente de datos usada para combinar las tablas}
+
+\item{maxChars}{el máximo número de caracteres permitido, en que un texto de la fuente difiere del texto limpio en la tabla de dimensión.
+Por ejemplo, "Frodo" difiere de "frodo" en 1 caracter. Si \code{maxChars = 3}, entonces el match se toma como bueno.
+Este parámetro proviene del método de distancia de Levenshtein.}
 }
 \value{
 un vector de surrogate keys. Si un dato en el origen no encuentra un match apropiado (strigrdist > maxChars), devuelve \code{NA}.

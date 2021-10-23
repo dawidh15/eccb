@@ -68,16 +68,16 @@ testthat::test_that(
       data.frame(personaje = c("Frodo", "Sam"),
                  personaje_key = c(match1, match2))
     testSourceTable <-
-      data.frame(personajes = c("Frodo", "Sam","Fordo", "Zam","Fordo", "frodo", "Sám", "Ffrodo", "ssAsms"))
+      data.frame(personajes = c("Frodo", "Sam","Fordo", "Zam","Fordo", "frodo", "Sam", "Frodo", "ssAsms"))
     expectedMatches <- c(match1,match2,match1,match2,match1,match1,match2,match1,NA)
     #act
     val1 <-
       EncontrarSurrogateFuzzyMemo(
-         dimTabla = testDimTable,
-         sourceTabla = testSourceTable,
-         dimJoinName = "personaje",
-         dimKeyName = "personaje_key",
-         sourceJoinName = "personajes",
+        tablaDim = testDimTable,
+        tablaFuente = testSourceTable,
+        nombreDimJoin = "personaje",
+        nombreDimClave = "personaje_key",
+        nombreFuenteJoin = "personajes",
          maxChars = 3)
 
     testthat::expect_identical(val1,expected = expectedMatches)
@@ -97,11 +97,11 @@ testthat::test_that(
     #act
     val1 <-
       EncontrarSurrogateFuzzyMemo(
-        dimTabla = testDimTable,
-        sourceTabla = testSourceTable,
-        dimJoinName = "personaje",
-        dimKeyName = "personaje_key",
-        sourceJoinName = "personajes",
+        tablaDim = testDimTable,
+        tablaFuente = testSourceTable,
+        nombreDimJoin = "personaje",
+        nombreDimClave = "personaje_key",
+        nombreFuenteJoin = "personajes",
         maxChars = 3)
 
     testthat::expect_identical(val1,expected = expectedMatches)
