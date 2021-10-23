@@ -18,6 +18,10 @@
 #' \item{5}{Alimentar memo con el nuevo match.
 #' }}
 #'
+#' @section Combinar con NormalizarTexto:
+#'
+#' Normalizar la columna de combinación de la tabla dimensional, junto con la columna de combinación de la tabla fuente, y luego aplicar el fuzzy matching con memoization para mejores resultados.
+#'
 #' @param tablaDim una versión recortada de la tabla dimensional, con el campo de join y el surrogate key. Si el campo de join es texto, entonces lo mejor es normalizarlo.
 #' @param tablaFuente una versión recortada de la tabla fuente, con el campo de join. Si el campo de join es texto, entonces lo mejor es normalizarlo.
 #' @param nombreDimJoin el nombre de la columna en la tabla dimensional usada para combinar las tablas.
@@ -34,10 +38,38 @@
 #' @export
 #'
 #' @examples
-#' ## don't run this in calls to 'example(add_numbers)'
-#' \dontrun{
-#'    EncontrarSurrogateFuzzyMemo(2, 3)
-#' }
+#' library(dplyr)
+#'
+#' # Suponer que se extrae de un archivo fuente
+#' columnaSucia <- c("lUnes ","MARTES.","Miércoles","Hueves","viernes","sabado","Domingo", "Lunes", "martes","Miércoles", "Hueves ","Fiernes,","Sábado","Domingo")
+#'
+#' dimTable <-
+#'   data.frame(dias = c("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo")) %>%
+#'   dplyr::mutate(Key = dplyr::row_number())
+#'
+#' # Normalizar texto
+#' columnaSucia <- NormalizarTexto(columnaSucia)
+#' dimTable <- dimTable %>%
+#'   dplyr::mutate(diasClean = NormalizarTexto(dias)$Limpio)
+#'
+#' # Fuzzy matching
+#' SK <-
+#'   EncontrarSurrogateFuzzyMemo(
+#'   tablaFuente = data.frame(dias = columnaSucia$Limpio)
+#'   ,tablaDim = dimTable
+#'   ,nombreDimJoin = "diasClean"
+#'   ,nombreDimClave = "Key"
+#'   ,nombreFuenteJoin = "dias"
+#'   ,maxChars = 3)
+#'
+#' # Agregar surrogate key al source table
+#' data <-
+#'   data.frame(diasSrcNorm = columnaSucia$Limpio,
+#'              diasSrcOrig = columnaSucia$Sucio,
+#'              ID = SK) %>%
+#'   left_join(dimTable, by = c("ID" = "Key"))
+#'
+#' data
 EncontrarSurrogateFuzzyMemo <-
   function(tablaDim,
            tablaFuente,
