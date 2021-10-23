@@ -1,12 +1,111 @@
 #' @import testthat
 NULL
 
+# Debugging
+# Create breakpoint, then source on save.
+
 # test generics ---------------
-# test_that(
-#   "Guardar Generico funciona",
-#   {
-#     wf <- WorkflowStatus() #es reconocido por Guardar
-#     testthat::expect_error(valor <-
-#                              Guardar(wd, donde = "C:/NoExistoEnNingunLado/", "Miarchivo"))
-#     rm(wf)
-#   })
+testthat::test_that(
+  ".EncontrarEnMemo",
+  {
+    #arrange
+    buscar <- "hola"
+    badMemo <- "badMemo"
+    match1 <- 1; match2 <- 123
+    memo <- data.frame(
+      original = c(buscar, badMemo,badMemo),
+      surrogateKey = c(match1,match2,match2)
+    )
+    #act
+    val1 <- .EncontrarEnMemo(buscar, memo = memo)
+    val2 <- .EncontrarEnMemo("noExiste", memo = memo)
+    testthat::expect_identical(val1,expected = match1)
+    testthat::expect_length(val2, 0)
+    testthat::expect_error(.EncontrarEnMemo(badMemo, memo = memo))
+
+    #clean
+    rm(list = ls())
+  })
+
+
+testthat::test_that(
+  ".EncontrarSurrogateFuzzy",
+  {
+    #arrange
+    match1 <- 1
+    match2 <- 2
+    testDimTable <-
+      data.frame(dimJoin = c("Frodo", "Sam"),
+                 dimKey = c(match1, match2))
+    #act
+    val1 <-
+      .EncontrarSurrogateFuzzy(buscaMe = "frrodo",
+                               buscaEnTabla = testDimTable,
+                               maxChars = 3)
+    val2 <-
+      .EncontrarSurrogateFuzzy(buscaMe = "Ssammass",
+                               buscaEnTabla = testDimTable,
+                               maxChars = 3)
+    val3 <-
+      .EncontrarSurrogateFuzzy(buscaMe = "frodo", buscaEnTabla = testDimTable, maxChars = 3)
+
+    testthat::expect_identical(val1,expected = match1)
+    testthat::expect_identical(val2,NA)
+    testthat::expect_identical(val3,expected = match1)
+    #clean
+    rm(list= ls())
+  })
+
+
+
+testthat::test_that(
+  "EncontrarSurrogateFuzzyMemo",
+  {
+    #arrange
+    match1 <- 1
+    match2 <- 2
+    testDimTable <-
+      data.frame(personaje = c("Frodo", "Sam"),
+                 personaje_key = c(match1, match2))
+    testSourceTable <-
+      data.frame(personajes = c("Frodo", "Sam","Fordo", "Zam","Fordo", "frodo", "Sám", "Ffrodo", "ssAsms"))
+    expectedMatches <- c(match1,match2,match1,match2,match1,match1,match2,match1,NA)
+    #act
+    val1 <-
+      EncontrarSurrogateFuzzyMemo(
+         dimTabla = testDimTable,
+         sourceTabla = testSourceTable,
+         dimJoinName = "personaje",
+         dimKeyName = "personaje_key",
+         sourceJoinName = "personajes",
+         maxChars = 3)
+
+    testthat::expect_identical(val1,expected = expectedMatches)
+
+    #clean
+    rm(list= ls())
+
+    #arrange
+    match1 <- 1
+    match2 <- 2
+    testDimTable <-
+      data.frame(personaje = c("Frodo", "Sam"),
+                 personaje_key = c(match1, match2))
+    testSourceTable <-
+      data.frame(personajes = c("Frodo", "Frodo","Sam", "Frodo","Frodo", "Sam", "Sam", "Sam", "Sam"))
+    expectedMatches <- c(match1,match1,match2,match1,match1,match2,match2,match2,match2)
+    #act
+    val1 <-
+      EncontrarSurrogateFuzzyMemo(
+        dimTabla = testDimTable,
+        sourceTabla = testSourceTable,
+        dimJoinName = "personaje",
+        dimKeyName = "personaje_key",
+        sourceJoinName = "personajes",
+        maxChars = 3)
+
+    testthat::expect_identical(val1,expected = expectedMatches)
+
+    #clean
+    rm(list= ls())
+  })
