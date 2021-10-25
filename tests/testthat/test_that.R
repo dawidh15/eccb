@@ -116,9 +116,11 @@ testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
 
   registro <-
     dplyr::tibble(
-      My_Key = NULL,
-      Nombre = "David M",
-      Altura = 1.67
+      #My_Key = NULL,
+      Nombre = c("David M", "Karen D"),
+      Altura = c(1.67,1.56),
+      Fecha = c(as.numeric(lubridate::as_datetime(lubridate::ymd("2021-10-14")))
+                ,as.numeric(lubridate::as_datetime(lubridate::ymd("2021-10-14"))))
     )
 
 
@@ -127,6 +129,7 @@ testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
     My_Key INTEGER NOT NULL UNIQUE
     , Nombre TEXT NOT NULL
     , Altura NUMERIC DEFAULT 0
+    , Fecha REAL NOT NULL
 
     ,CONSTRAINT hola_pk PRIMARY KEY(My_Key AUTOINCREMENT)
   )"
@@ -137,6 +140,19 @@ testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
   conexion <- ConexionSQLite(RutaDB = "test2.sqlite", Tabla = "Altura")
   valor <- Guardar(registro, conexion)
   testthat::expect_true(valor)
+
+
+  registroMalo <-
+    dplyr::tibble(
+      #My_Key = NULL,
+      Nombre = "Ana M",
+      Altura = 1.54,
+      Fecha = NULL
+    )
+
+  valor <- Guardar(registroMalo, conexion)
+  testthat::expect_false(valor)
+
   DBI::dbDisconnect(con)
 
   testthat::expect_error( # verifica que la tabla existe, de lo contrario arroja error.

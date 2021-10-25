@@ -43,25 +43,35 @@ setMethod(
 
       DBI::dbBegin(con)
       # Guardar Registro
-      nRegistros <-
         tryCatch({
-          registros <- DBI::dbAppendTable(con
-                                          , name = conexion@Tabla
-                                          , value = x)
-
-          DBI::dbCommit(con)
-          registros
+          registros <-
+            DBI::dbAppendTable(con
+                               , name = conexion@Tabla
+                               , value = x)
+          if (registros != nrow(x))
+          {
+            DBI::dbRollback(con)
+            assign("valor", FALSE, pos = -1)
+          } else {
+            DBI::dbCommit(con)
+            assign("valor", TRUE, pos = -1)
+          }
         },
         error = function(cnd)
         {
           DBI::dbRollback(con)
+         print(conditionMessage(cnd))
+          #TODO
+          #If func list not empty
+          # execute funclist
         },
         #desconectar
-        finally = DBI::dbDisconnect(con)
+        finally = {
+          DBI::dbDisconnect(con)
+          #print("On finally")
+        }
         )# tryCatch
 
-      if (nRegistros > 0)
-        valor <- TRUE
       return(valor)
     }
 )
