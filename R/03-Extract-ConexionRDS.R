@@ -11,11 +11,11 @@ NULL
 #' Devuelve error si el objeto no se encuentra en la ruta provista.
 #'
 #'
-#' @describeIn Extraer Extrar un objeto R en en una conexión \linkS4class{ConexionRDS}.
+#' @describeIn Extraer-methods Extrar un objeto R en en una conexión \linkS4class{ConexionRDS}.
 #'
 #' @examples
 #' \dontrun{
-#'   objecto <- Extraer(miConexioRDS)
+#'   objeto <- Extraer(miConexioRDS)
 #' }
 #'
 #' @importFrom fs file_exists

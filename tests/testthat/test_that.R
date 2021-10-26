@@ -112,8 +112,10 @@ testthat::test_that(
 
 
 # Guardar ConexionSQLiteTabla Tibble
-testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
 
+
+
+testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
   registro <-
     dplyr::tibble(
       #My_Key = NULL,
@@ -122,7 +124,6 @@ testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
       Fecha = c(as.numeric(lubridate::as_datetime(lubridate::ymd("2021-10-14")))
                 ,as.numeric(lubridate::as_datetime(lubridate::ymd("2021-10-14"))))
     )
-
 
   sql <-
     "CREATE TABLE IF NOT EXISTS Altura(
@@ -136,11 +137,20 @@ testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
   con <- DBI::dbConnect(RSQLite::SQLite(), "test2.sqlite")
   rs <- DBI::dbSendQuery(con, sql)
   DBI::dbClearResult(rs)
-
+  DBI::dbDisconnect(con)
   conexion <- ConexionSQLite(RutaDB = "test2.sqlite", Tabla = "Altura")
+
   valor <- Guardar(registro, conexion)
   testthat::expect_true(valor)
 
+
+  testthat::expect_error( # verifica que la tabla existe, de lo contrario arroja error
+    ConexionSQLite(RutaDB = "test2.sqlite", NombreTabla = "noExisto"))
+
+  df <- Extraer(conexion)
+  testthat::expect_true(is(df, "data.frame"))
+  testthat::expect_true(nrow(df) > 0)
+  testthat::expect_true(ncol(df) > 0)
 
   registroMalo <-
     dplyr::tibble(
@@ -153,18 +163,13 @@ testthat::test_that("Probar Guardar(ConexionSQLite, Tibble)",{
   valor <- Guardar(registroMalo, conexion)
   testthat::expect_false(valor)
 
-  DBI::dbDisconnect(con)
-
-  testthat::expect_error( # verifica que la tabla existe, de lo contrario arroja error.
-    ConexionSQLite(RutaDB = "test2.sqlite", NombreTabla = "noExisto"))
-
   fs::file_delete("test2.sqlite")
-    rm(list = ls())
-
+  rm(list = ls())
 })
 
 
 
+# ConexionRDS ------------------
 testthat::test_that("Probar Extraer(ConexionRDS)", {
  x <- rnorm(10)
  saveRDS(x,file = "test.RDS")

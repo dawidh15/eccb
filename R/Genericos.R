@@ -27,8 +27,8 @@ setGeneric("Guardar", valueClass = "logical",function(x, conexion,...)standardGe
 #'
 #'
 #' @docType methods
-#' @name Extraer
-#' @rdname Extraer
+#' @name Extraer-methods
+#' @rdname Extraer-methods
 #'
 #' @return El tipo de objeto depende de la conexión.
 #'

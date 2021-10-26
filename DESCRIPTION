@@ -1,11 +1,10 @@
 Package: eccd
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Extract, clean, conform and deliver data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: David Martínez Cascante
+Maintainer: David Martínez Cascante <dawidh15@gmail.com>
+Description: Ayuda a realizar ETL, de acuerdo con los subsistemas descritos por el grupo Kimball.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
@@ -15,6 +14,7 @@ Collate:
     'Genericos.R'
     '03-Extract.R'
     '03-Extract-ConexionRDS.R'
+    '03-Extract-ConexionRSQLite.R'
     '07-Deduplication.R'
     '14-Surrogate-Key-Pipeline.R'
     '35-Deliver-SQLite.R'
