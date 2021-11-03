@@ -505,3 +505,62 @@ ValidarFilas <- function(Fila, Datos)
 
   return(filas)
 }
+
+
+
+# Traer filas correctas----
+#'
+#' Devuelve las filas que pasan la validación
+#'
+#' Requiere de una instancia de \linkS4class{Filas} generada por \link{ValidarFilas}, y un \code{data.frame}. La función mira entre las filas que han pasado la validación, y filtra el conjunto de datos para devolver solo las filas correctas.
+#'
+#' @seealso
+#'  la función \link{TraerErrores} que extrae las filas errónea
+#'
+#'  @name Data-Extractors
+#'  @rdname Data-Extractors
+#'
+#' @return un \link{data.frame}.
+#'
+#'
+#' @param Datos un \link{data.frame}.
+#' @param Filas Un objeto \linkS4class{Filas}.
+#'
+#' @export
+TraerFilas <- function(Filas, Datos)
+{
+  stopifnot(is(Filas, "Filas"))
+  stopifnot(is(Datos, "data.frame"))
+
+  return(Datos[filasCorrectas(Filas),])
+
+}
+
+
+# Traer filas erróneas----
+#'
+#' Devuelve las filas que \bold{no pasan} la validación.
+#'
+#' Requiere de una instancia de \linkS4class{Filas} generada por \link{ValidarFilas}, y un \code{data.frame}. La función mira entre las filas que contienen errores, y filtra el conjunto de datos para devolver solo las filas incorrectas.
+#'
+#' @seealso
+#'  la función \link{TraerFilas} que extrae las filas errónea
+#'
+#' @return un \link{data.frame}.
+#'
+#'
+#' @param Datos un \link{data.frame}.
+#' @param Filas Un objeto \linkS4class{Filas}.
+#'
+#'  @name Data-Extractors
+#'  @rdname Data-Extractors
+#'
+#' @export
+TraerErrores <- function(Filas, Datos)
+{
+  stopifnot(is(Filas, "Filas"))
+  stopifnot(is(Datos, "data.frame"))
+
+  return(Datos[filasErroresPos(Filas),])
+
+}
