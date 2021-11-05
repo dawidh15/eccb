@@ -61,6 +61,7 @@ testthat::test_that(
     expect_equal(filasErrores(filas), list("Altura inapropiada",character(0),"Altura inapropiada",character(0)))
     expect_equal(filasErroresPos(filas), c(1,3))
     expect_equal(filasStatus(filas), c("Nueva","Nueva","Nueva","Nueva"))
+    expect_true(is(filas, "Filas"))
 
     #clean
     rm(list = ls())

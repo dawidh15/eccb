@@ -434,8 +434,7 @@ AgregarFila <- function(Registro, Fila, Filas, contador)
       "ValidarFila"
       ,
       signature = c(Fila = claseFila, Registro = "data.frame")
-      ,
-      where = .GlobalEnv
+      #,where = .GlobalEnv
     )
 
   if (existeMetodo)
