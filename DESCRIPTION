@@ -10,6 +10,7 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 Depends: stringdist
+Imports: DBI, RSQLite, dplyr, fs, lubridate, stringr, testthat, tidyverse
 Collate: 
     'Genericos.R'
     '03-Extract.R'
@@ -20,5 +21,4 @@ Collate:
     '14-Surrogate-Key-Pipeline.R'
     '35-Deliver-SQLite.R'
     'eccd-package.R'
-    'hello.R'
     'onLoad-eccd.R'
