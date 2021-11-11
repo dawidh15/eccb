@@ -16,6 +16,7 @@
 #' @param x El objeto a guardar.
 #' @param conexion Una conexión al archivo o base de datos donde se desea guardar el objeto.
 #'
+#' @export
 setGeneric("Guardar", valueClass = "logical",function(x, conexion,...)standardGeneric("Guardar"))
 
 # Extraer -----------------------
@@ -34,4 +35,5 @@ setGeneric("Guardar", valueClass = "logical",function(x, conexion,...)standardGe
 #'
 #' @param conexion Una conexión al archivo o base de datos donde se desea guardar el objeto.
 #'
+#' @export
 setGeneric("Extraer",function(conexion,...)standardGeneric("Extraer"))

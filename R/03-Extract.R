@@ -40,7 +40,7 @@ setClass("ConexionRDS", contains = "Conexion")
 #'
 #' Crea una conexión a un archivo de datos en formato R.
 #'
-#' @param nombreArchivo La ruta completa hacia el archivo \code{RDS}.
+#' @param rutaArchivo La ruta completa hacia el archivo \code{RDS}.
 #'
 #' @importFrom stringr str_replace str_to_lower
 #'
