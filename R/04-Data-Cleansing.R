@@ -256,7 +256,7 @@ setMethod("filaStatus<-","Fila", function(x, value)
 #' @param Registro es una fila del data frame. Las columnas deben tener los mismos nombres que el slot del objeto \code{Fila@@Columnas}.
 #'
 #' @examples
-#' #' cols <- Columnas(c("ID", "nombre", "peso"), c("integer", "character", "numeric"))
+#' cols <- Columnas(c("ID", "nombre", "peso"), c("integer", "character", "numeric"))
 #'
 #' fila <- Fila(cols)
 #'
@@ -463,7 +463,7 @@ AgregarFila <- function(Registro, Fila, Filas, contador)
       posicion <- contador
       Filas@Error <- append(Filas@Error,Fila@Error)
       Filas@Errores <- append(Filas@Errores, list(Fila@ErroresMsg))
-      Filas@ColumnasEnError <- append(Filas@ColumnasEnError, Fila@ErroresIndice)
+      Filas@ColumnasEnError <- append(Filas@ColumnasEnError, list(Fila@ErroresIndice))
       Filas@Status <- append(Filas@Status, Fila@Status)
       if (Fila@Error)
       {

@@ -29,7 +29,7 @@ Lo más apropiado es definir el método en .GlobalEnv.
 }
 
 \examples{
-#' cols <- Columnas(c("ID", "nombre", "peso"), c("integer", "character", "numeric"))
+cols <- Columnas(c("ID", "nombre", "peso"), c("integer", "character", "numeric"))
 
 fila <- Fila(cols)
 
