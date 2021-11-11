@@ -7,7 +7,7 @@
 ConexionRDS(rutaArchivo)
 }
 \arguments{
-\item{nombreArchivo}{La ruta completa hacia el archivo \code{RDS}.}
+\item{rutaArchivo}{La ruta completa hacia el archivo \code{RDS}.}
 }
 \description{
 Crea una conexión a un archivo de datos en formato R.
@@ -15,6 +15,6 @@ Crea una conexión a un archivo de datos en formato R.
 \examples{
 
 \dontrun{
-   ConexionRDS("C:/Myfile.rds") # AÃ±adir extensiÃ³n, o arroja error
+   ConexionRDS("C:/Myfile.rds") # Añadir extensión, o arroja error
 }
 }

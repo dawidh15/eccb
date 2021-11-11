@@ -17,7 +17,7 @@ Crea una conexión a un archivo de SQLite.
 \examples{
 
 \dontrun{
-   ConexionSQLite("C:/myDB.sqlite") # AÃ±adir extensiÃ³n, o arroja error
+   ConexionSQLite("C:/myDB.sqlite") # Añadir extensión, o arroja error
     ConexionSQLite("C:/myDB.db") # Cambia extension
 }
 }

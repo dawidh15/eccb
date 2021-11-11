@@ -61,10 +61,10 @@ Normalizar la columna de combinación de la tabla dimensional, junto con la colu
 library(dplyr)
 
 # Suponer que se extrae de un archivo fuente
-columnaSucia <- c("lUnes ","MARTES.","MiÃ©rcoles","Hueves","viernes","sabado","Domingo", "Lunes", "martes","MiÃ©rcoles", "Hueves ","Fiernes,","SÃ¡bado","Domingo")
+columnaSucia <- c("lUnes ","MARTES.","Miércoles","Hueves","viernes","sabado","Domingo", "Lunes", "martes","Miércoles", "Hueves ","Fiernes,","Sábado","Domingo")
 
 dimTable <-
-  data.frame(dias = c("Lunes","Martes","MiÃ©rcoles","Jueves","Viernes","SÃ¡bado","Domingo")) \%>\%
+  data.frame(dias = c("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo")) \%>\%
   dplyr::mutate(Key = dplyr::row_number())
 
 # Normalizar texto
